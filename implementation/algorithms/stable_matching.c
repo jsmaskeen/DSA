@@ -9,7 +9,7 @@ int check_all_engaged(int arr[],int n){
     }
     return 1;
 }
-
+ 
 int get_not_enganged_man_idx(int arr[],int n){
     for (int i=0;i<n;i++){
         if (arr[i] == 0){
