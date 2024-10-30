@@ -1,5 +1,7 @@
+# ifndef HEADERFILE
+# define HEADERFILE
 #include "header.h"
-
+# endif
 typedef struct stacknode
 {
     int val;
@@ -50,6 +52,7 @@ int pop(stack *s)
     s->top = s->top->next;
     int v = tmp->val;
     free(tmp);
+    s->size--;
     return v;
 }
 

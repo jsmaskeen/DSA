@@ -1,4 +1,6 @@
 #include "linked_list.c"
+#include "stack.c"
+#include "queue.c"
 
 int **random_adj_matrix(int numvertex, int directed)
 {
@@ -202,14 +204,87 @@ int get_num_edges_from_AdjMat(int **adjm, int numvertex)
     return nume;
 }
 
+typedef struct graph
+{
+    int nvertex;
+    node **adjlist;
+} graph;
+
+graph *make_random_graph(int nvertex, int directed)
+{
+    graph *g = (graph *)malloc(sizeof(graph));
+    g->nvertex = nvertex;
+    int **A = random_adj_matrix(nvertex, directed);
+    g->adjlist = adjMat_to_adjLst(A, nvertex);
+    return g;
+}
+
+void dfs(graph *g, int startnode)
+{
+    int *visited = (int *)malloc(sizeof(int) * g->nvertex);
+
+    for (int i = 0; i < g->nvertex; i++) visited[i] = 0;
+    stack *s = makestack();
+    printf("Pushed %d to stack\n", startnode);
+    push(s, startnode);
+    while (s->size > 0)
+    {
+        int v = pop(s);
+        printf("Popped %d from stack\n", v);
+        if (visited[v - 1] == 0)
+        {
+            visited[v - 1] = 1;
+            printf("Visited vertex %d\n", v);
+            node *h = g->adjlist[v - 1];
+            while (h != NULL)
+            {
+                if (visited[h->val - 1] == 0)
+                {
+                    push(s, h->val);
+                    printf("Pushed %d to stack\n", h->val);
+                }
+                h = h->next;
+            }
+        }
+    }
+}
+
+
+void bfs(graph *g, int startnode)
+{
+    int *visited = (int *)malloc(sizeof(int) * g->nvertex);
+
+    for (int i = 0; i < g->nvertex; i++) visited[i] = 0;
+
+    queue *q = makequeue();
+    printf("Enqueued %d to queue\n", startnode);
+    enqueue(q, startnode);
+    while (q->size > 0)
+    {
+        int v = dequeue(q);
+        printf("Dequeued %d from queue\n", v);
+        if (visited[v - 1] == 0)
+        {
+            visited[v - 1] = 1;
+            printf("Visited vertex %d\n", v);
+            node *h = g->adjlist[v - 1];
+            while (h != NULL)
+            {
+                if (visited[h->val - 1] == 0)
+                {
+                    enqueue(q, h->val);
+                    printf("Enqueued %d to queue\n", h->val);
+                }
+                h = h->next;
+            }
+        }
+    }
+}
+
 int main()
 {
-    int **A = random_adj_matrix(6, -1);
-    printAdjMat(A, 6);
-    node **A_adjlst = adjMat_to_adjLst(A, 6);
-    printAdjLst(A_adjlst, 6);
-    int **A_Edglst = adjLst_to_edgLst(A_adjlst, 6);
-    printEdgLst(A_Edglst, get_num_edges_from_AdjLst(A_adjlst, 6));
-    int **A_dup = edgLst_to_adjMat(A_Edglst, get_num_edges_from_AdjLst(A_adjlst, 6));
-    printAdjMat(A_dup, 6);
+    int nvtex = 6;
+    graph *g = make_random_graph(nvtex, 1);
+    printAdjLst(g->adjlist, nvtex);
+    bfs(g, 1);
 }

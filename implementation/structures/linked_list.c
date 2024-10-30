@@ -1,4 +1,7 @@
+# ifndef HEADERFILE
+# define HEADERFILE
 #include "header.h"
+# endif
 
 typedef struct node
 {
